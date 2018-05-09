@@ -5,8 +5,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import { connect } from 'react-redux'
 
-import MyFlatList from './myflatlist/MyFlatList'
+import UniCourseList from './list/UniCourseList'
 import UniProfile from './UniProfile'
+import CourseList from './CourseList'
+import CourseProfile from './CourseProfile'
 
 class Favourites extends Component {
   constructor (props) {
@@ -27,12 +29,12 @@ class Favourites extends Component {
     if (favouriteUnis.length <= 0) {
       return <Text style={styles.noUnisText}>Universities You Favourite Will Appear Here</Text>
     } else {
-      return (
-        <MyFlatList
-          style={styles.favouriteUniList}
-          data={favouriteUnis}
-          onPressItem={this.onPressItem} />
-      )
+      return <UniCourseList
+        data={favouriteUnis}
+        keyExtractor={(item) => item.name}
+        titleExtractor={(item) => item.name}
+        onPressItem={this.onPressItem}
+      />
     }
   }
 
@@ -85,17 +87,22 @@ const mapDispatchToProps = dispatch => {
 const favourites = connect(mapStateToProps, mapDispatchToProps)(Favourites)
 
 const headerTitleForNavigation = (navigation) => {
-  if (navigation.state.routeName === 'Favourites') {
-    return 'Favourites'
-  } else {
-    return ''
+  switch (navigation.state.routeName) {
+    case 'Search':
+      return 'Search'
+    case 'CourseList':
+      return 'Courses'
+    default:
+      break
   }
 }
 
 const FavouritesNavigator = StackNavigator(
   {
     Favourites: { screen: favourites },
-    UniProfile: { screen: UniProfile }
+    UniProfile: { screen: UniProfile },
+    CourseList: { screen: CourseList },
+    CourseProfile: { screen: CourseProfile }
   },
   {
     headerMode: 'float',

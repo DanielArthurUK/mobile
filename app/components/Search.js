@@ -4,16 +4,17 @@ import { StackNavigator } from 'react-navigation'
 
 import { connect } from 'react-redux'
 
-import UniProfile from './UniProfile'
 import Loading from './Loading'
 import NetworkError from './NetworkError'
-import UniList from './UniList'
+import UniProfile from './UniProfile'
+import UniCourseList from './list/UniCourseList'
+import CourseList from './CourseList'
+import CourseProfile from './CourseProfile'
 
 class Search extends Component {
   constructor (props) {
     super(props)
 
-    this.state = { searchBoxText: '' }
     this.onPressItem = this.onPressItem.bind(this)
   }
 
@@ -31,7 +32,12 @@ class Search extends Component {
     } else if (uniList.fetchFailed) {
       return <NetworkError />
     } else {
-      return <UniList data={uniList.lookupTable} onPressItem={this.onPressItem} />
+      return <UniCourseList
+        data={uniList.lookupTable}
+        keyExtractor={(item) => item.name}
+        titleExtractor={(item) => item.name}
+        onPressItem={this.onPressItem}
+      />
     }
   }
 
@@ -69,17 +75,22 @@ const mapDispatchToProps = dispatch => {
 const search = connect(mapStateToProps, mapDispatchToProps)(Search)
 
 const headerTitleForNavigation = (navigation) => {
-  if (navigation.state.routeName === 'Search') {
-    return 'Search'
-  } else {
-    return ''
+  switch (navigation.state.routeName) {
+    case 'Search':
+      return 'Search'
+    case 'CourseList':
+      return 'Courses'
+    default:
+      break
   }
 }
 
 const SearchNavigator = StackNavigator(
   {
     Search: { screen: search },
-    UniProfile: { screen: UniProfile }
+    UniProfile: { screen: UniProfile },
+    CourseList: { screen: CourseList },
+    CourseProfile: { screen: CourseProfile }
   },
   {
     headerMode: 'float',
